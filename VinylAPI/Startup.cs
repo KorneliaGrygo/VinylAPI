@@ -20,6 +20,8 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using VinylAPI.Validators;
 using VinylAPI.Models;
+using Microsoft.AspNetCore.Identity;
+using VinylAPI.Entities;
 
 namespace VinylAPI
 {
@@ -48,8 +50,10 @@ namespace VinylAPI
             services.AddScoped<IBandService, BandServices>();
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IMusicAlbumService, MusicAlbumService>();
+            services.AddScoped<IAccountService, AccountService>();
             #endregion
-
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<ErrorHandlingMiddleware>();
 
             #region validators
