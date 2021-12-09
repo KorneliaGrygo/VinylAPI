@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Linq;
 using VinylAPI.Data;
 using VinylAPI.Entities;
+using VinylAPI.Middleware.Exceptions;
 using VinylAPI.Models;
 
 namespace VinylAPI.Services
@@ -8,6 +10,7 @@ namespace VinylAPI.Services
     public interface IAccountService
     {
         void RegisterUser(RegisterUserDto dto);
+        string GenerateJwt(LoginDto dto);
     }
     public class AccountService : IAccountService
     {
@@ -20,7 +23,22 @@ namespace VinylAPI.Services
             _passwordHasher = passwordHasher;
         }
 
-         public void RegisterUser(RegisterUserDto dto)
+        public string GenerateJwt(LoginDto dto)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == dto.Email);
+            if (user == null)
+            {
+                throw new BadRequestException("Nieprawidłowy login lub hasło");
+            }
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+            if(result == PasswordVerificationResult.Failed) 
+            {
+                throw new BadRequestException("Nieprawidłowy login lub hasło");
+
+            }
+        }
+
+        public void RegisterUser(RegisterUserDto dto)
         {
             var newUser = new User()
             {
