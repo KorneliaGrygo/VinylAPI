@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VinylAPI.Models;
 using VinylAPI.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace VinylAPI.Controllers
 {
     [ApiController]
-    [Route("api/bands/{bandId}/album/{albumId}/song")]
+    [Route("api/[controller]")]
 
     public class SongController : ControllerBase
     {
@@ -14,26 +15,31 @@ namespace VinylAPI.Controllers
         {
             _service = service;
         }
-        [HttpGet]
+        [HttpGet("bands/{bandId}/album/{albumId}/song")]
         public IActionResult GetAllSong([FromRoute] int bandId, [FromRoute] int albumId)
         {
             var albums = _service.GetAll(bandId, albumId);
             return Ok(albums);
         }
-        [HttpGet("{songId}")]
+        [HttpGet("query")]
+        public IActionResult GetAllSongsWithQuuery([FromQuery] Models.Query query)
+        {
+            return Ok(_service.GetAllWithQuery(query));
+        }
+        [HttpGet("bands/{bandId}/album/{albumId}/song/{songId}")]
         public IActionResult GetSongbyId([FromRoute] int bandId, [FromRoute] int albumId, [FromRoute] int songId)
         {
             var albums = _service.GetById(bandId, albumId, songId);
             return Ok(albums);
         }
-        [HttpPost("create")]
+        [HttpPost("bands/{bandId}/album/{albumId}/song/create")]
         public IActionResult CreateSongForAlbum([FromRoute] int bandId, [FromRoute] int albumId, [FromBody] CreateSongDto dto)
         {
             var songId = _service.CreateSong(bandId, albumId, dto);
 
             return Created($"api/bands/{bandId}/album/{albumId}/song/{songId}", null);
-        }
-        [HttpPut("update")]
+}
+        [HttpPut("bands/{bandId}/album/{albumId}/song/update")]
         public IActionResult UpdateSong([FromRoute] int bandId, [FromRoute] int albumId, [FromBody] UpdateSongDto dto)
         {
             _service.UpdateSong(bandId, albumId, dto);

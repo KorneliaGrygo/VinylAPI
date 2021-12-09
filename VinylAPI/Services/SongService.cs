@@ -14,7 +14,7 @@ namespace VinylAPI.Services
     public interface ISongService
     {
         IEnumerable<SongDto> GetAll(int bandId, int albumId);
-        PageResult<SongDto> GetAllWithQuery(int bandId, int albumId, Query query);
+        PageResult<SongDto> GetAllWithQuery(Query query);
         SongDto GetById(int bandId, int albumId, int songId);
         int CreateSong(int bandId, int albumId, CreateSongDto dto);
         void UpdateSong(int bandId, int albumId, UpdateSongDto dto);
@@ -67,7 +67,7 @@ namespace VinylAPI.Services
             return _mapper.Map<IEnumerable<SongDto>>(album.Songs.ToList());
         }
 
-        public PageResult<SongDto> GetAllWithQuery(int bandId, int albumId, Query query)
+        public PageResult<SongDto> GetAllWithQuery(Query query)
         {
             var baseQuery = _context.Songs.Where(x => query.SearchPhrase == null || x.Name.ToLower().Contains(query.SearchPhrase.ToLower()));
 
@@ -88,8 +88,8 @@ namespace VinylAPI.Services
                 .Take(query.PageSize)
                 .ToList();
             var dto = _mapper.Map<IEnumerable<SongDto>>(songs);
-            return new PageResult<SongDto>(dto, dto.Count(), query.PageSize, query.PageNumber); 
 
+            return new PageResult<SongDto>(dto, dto.Count(), query.PageSize, query.PageNumber); 
         }
 
         public SongDto GetById(int bandId, int albumId, int songId)
