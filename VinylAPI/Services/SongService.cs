@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using VinylAPI.Data;
 using VinylAPI.Entities;
 using VinylAPI.Middleware.Exceptions;
@@ -12,6 +14,7 @@ namespace VinylAPI.Services
     public interface ISongService
     {
         IEnumerable<SongDto> GetAll(int bandId, int albumId);
+        PageResult<SongDto> GetAllWithQuery(int bandId, int albumId, Query query);
         SongDto GetById(int bandId, int albumId, int songId);
         int CreateSong(int bandId, int albumId, CreateSongDto dto);
         void UpdateSong(int bandId, int albumId, UpdateSongDto dto);
@@ -62,6 +65,31 @@ namespace VinylAPI.Services
                 throw new NotFoundException($"Album o id {albumId} nie istnieje");
 
             return _mapper.Map<IEnumerable<SongDto>>(album.Songs.ToList());
+        }
+
+        public PageResult<SongDto> GetAllWithQuery(int bandId, int albumId, Query query)
+        {
+            var baseQuery = _context.Songs.Where(x => query.SearchPhrase == null || x.Name.ToLower().Contains(query.SearchPhrase.ToLower()));
+
+            if (!string.IsNullOrEmpty(query.SearchPhrase))
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<Song, object>>>
+                {
+                    {nameof(Song.Name).ToLower(), r=>r.Name },
+                    {nameof(Song.Lenght).ToLower() , r=>r.Lenght},
+                };
+
+                var selectedColumn = columnsSelector[query.SortBy.ToLower()];
+                baseQuery = query.SortDirection == SortDirection.ASC ?
+                    baseQuery.OrderBy(selectedColumn) :
+                    baseQuery.OrderByDescending(selectedColumn);
+            }
+            var songs = baseQuery.Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
+                .ToList();
+            var dto = _mapper.Map<IEnumerable<SongDto>>(songs);
+            return new PageResult<SongDto>(dto, dto.Count(), query.PageSize, query.PageNumber); 
+
         }
 
         public SongDto GetById(int bandId, int albumId, int songId)
