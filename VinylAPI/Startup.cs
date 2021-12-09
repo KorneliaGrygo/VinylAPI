@@ -54,6 +54,8 @@ namespace VinylAPI
 
             #region validators
             services.AddScoped<IValidator<CreateAlbumDto>, CreateAlbumDtoValidator>(); //renestracna validatora 
+            services.AddScoped<IValidator<CreateBandDto>, CreateBandDtoValidator>(); //renestracna validatora 
+            services.AddScoped<IValidator<CreateSongDto>, CreateSongDtoValidator>(); //renestracna validatora 
             #endregion
             services.AddSwaggerGen(c =>
             {
