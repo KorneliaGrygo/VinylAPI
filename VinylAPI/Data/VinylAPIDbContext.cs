@@ -18,6 +18,7 @@ namespace VinylAPI.Data
         public DbSet<Band> Bands { get; set; }
         public DbSet<MusicAlbum> MusicAlbums { get; set; }
         public DbSet<Song> Songs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
