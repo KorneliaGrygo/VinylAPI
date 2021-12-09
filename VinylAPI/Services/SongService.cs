@@ -71,7 +71,7 @@ namespace VinylAPI.Services
         {
             var baseQuery = _context.Songs.Where(x => query.SearchPhrase == null || x.Name.ToLower().Contains(query.SearchPhrase.ToLower()));
 
-            if (!string.IsNullOrEmpty(query.SearchPhrase))
+            if (!string.IsNullOrEmpty(query.SortBy))
             {
                 var columnsSelector = new Dictionary<string, Expression<Func<Song, object>>>
                 {
