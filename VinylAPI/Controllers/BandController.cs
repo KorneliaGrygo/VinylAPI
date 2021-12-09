@@ -24,10 +24,10 @@ namespace VinylAPI.Controllers
             _serivce = serivce;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpGet("Query")]
+        public IActionResult GetAll([FromQuery] Query query)
         {
-            var bandsDtos = _serivce.GetAll();
+            var bandsDtos = _serivce.GetAll(query);
 
             return Ok(bandsDtos);
         }

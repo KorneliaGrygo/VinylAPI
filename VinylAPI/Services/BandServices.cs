@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VinylAPI.Data;
 using VinylAPI.Entities;
@@ -14,7 +15,7 @@ namespace VinylAPI.Services
     public interface IBandService
     {
         BandDto GetById(int id);
-        IEnumerable<BandDto> GetAll();
+        PageResult<BandDto> GetAll(Query query);
         int Create(CreateBandDto dto);
         void Delete(int bandId);
         void UpdateBand(int bandId, UpdateBandDto dto);
@@ -42,16 +43,34 @@ namespace VinylAPI.Services
             var bandDto = _mapper.Map<BandDto>(band);
             return bandDto;
         }
-
-        public IEnumerable<BandDto> GetAll()
+        public PageResult<BandDto> GetAll(Query query)
         {
-            var bands = _dbContext.Bands
+            var baseQuery = _dbContext.Bands
                    .Include(x => x.Albums)
                    .ThenInclude(x => x.Songs)
-                   .ToList();
+                   .Where(x => query.SearchPhrase == null ||
+                   (x.Name.ToLower().Contains(query.SearchPhrase.ToLower())
+                   || x.Description.ToLower().Contains(query.SearchPhrase.ToLower())));
 
+            if (!string.IsNullOrEmpty(query.SortBy))
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<Band, object>>>
+                {
+                    {nameof(Band.Name), r=>r.Name },
+                    {nameof(Band.Description), r=>r.Description },
+                };
+                var selectedColumn = columnsSelector[query.SortBy];
+                baseQuery = query.SortDirection == SortDirection.ASC ?
+                    baseQuery.OrderBy(selectedColumn):
+                    baseQuery.OrderByDescending(selectedColumn);
+            }
+
+            var bands = baseQuery.Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
+                .ToList();
             var bandsDtos = _mapper.Map<List<BandDto>>(bands);
-            return bandsDtos;
+
+            return new PageResult<BandDto>(bandsDtos, bandsDtos.Count(), query.PageSize, query.PageNumber);
         }
 
         public int Create(CreateBandDto dto)

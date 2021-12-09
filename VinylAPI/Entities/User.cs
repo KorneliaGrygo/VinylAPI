@@ -18,5 +18,6 @@ namespace VinylAPI.Entities
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
         public int RoleId { get; set; }
+        
     }
 }

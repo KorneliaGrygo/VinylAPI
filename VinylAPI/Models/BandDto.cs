@@ -8,8 +8,9 @@ namespace VinylAPI.Models
 {
     public class BandDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<MusicAlbumDto> Albums { get; set; }
+        //public List<MusicAlbumDto> Albums { get; set; }
     }
 }

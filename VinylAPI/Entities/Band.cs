@@ -13,6 +13,5 @@ namespace VinylAPI.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public ICollection<MusicAlbum> Albums { get; set; }
-
     }
 }
