@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VinylAPI.Data;
 using VinylAPI.Entities;
@@ -122,6 +126,74 @@ namespace VinylAPI
                             }
                         }
                     }
+
+                },
+                new Band()
+                {
+                    Name = "ACDC",
+                    Description = " australijski zespół hardrockowy założony w Sydney w 1973 roku przez braci Angusa i Malcolma Youngów. Zespół jest uznawany m.in. za pioniera muzyki hardrockowej[3]. Mimo tego, członkowie zespołu zawsze klasyfikowali swoją muzykę jako rock & roll.",
+                    Albums = new List<MusicAlbum>()
+                    {
+                        new MusicAlbum()
+                        {
+                            Name = "Highway to Hell",
+                            AmountOfSongs = 8,
+                            Genre = "rock",
+                            PublicationYear = 1979,
+                            Songs = new List<Song>()
+                            {
+                                new Song()
+                                {
+                                    Name = "Highway to Hell",
+                                    Lenght = 3.28,
+                                },
+                                new Song()
+                                {
+                                    Name = "Girls Got Rhythm",
+                                    Lenght = 3.23
+                                },
+                                new Song()
+                                {
+                                    Name = "Girdasls Got Rhythm",
+                                    Lenght = 3.3
+                                },
+                                new Song()
+                                {
+                                    Name = "Walk All Over You",
+                                    Lenght = 5.10
+                                },
+
+                            }
+
+                        }
+                        ,new MusicAlbum()
+                        {
+                            Name = "Back in Black",
+                            AmountOfSongs = 10,
+                            Genre = "rock",
+                            PublicationYear = 1980,
+                            Songs = new List<Song>()
+                            {
+                                new Song()
+                                {
+                                    Name = "Piosenka",
+                                    Lenght = 23.5
+                                },
+                                new Song()
+                                {
+                                    Name = "Piosenka2",
+                                    Lenght = 22
+                                },
+                                new Song()
+                                {
+                                    Name = "ADoSortowania",
+                                    Lenght = 23.5
+                                }
+                            }
+                        }
+                    }
+
+
 
                 }
             };
