@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using VinylAPI.Data;
 using VinylAPI.Entities;
@@ -18,6 +19,7 @@ namespace VinylAPI.Services
         int Create(int bandId, CreateAlbumDto dto);
         void Update(int bandId, UpdateAlbumDto dto);
         void Delete(int bandId, int albumId);
+        PageResult<MusicAlbumDto> GetAllWithQuery(Query query);
     }
     public class MusicAlbumService : IMusicAlbumService
     {
@@ -90,6 +92,37 @@ namespace VinylAPI.Services
                 throw new NotFoundException($"Podany zespół nie istnieje");
 
             return _mapper.Map<IEnumerable<GetMusicAlbumDto>>(band.Albums);
+        }
+
+        public PageResult<MusicAlbumDto> GetAllWithQuery(Query query)
+        {
+            var baseQuery = _context.MusicAlbums
+                .Where(x => query.SearchPhrase == null || (x.Genre.ToLower().Contains(query.SearchPhrase) || (x.Name.ToLower().Contains(query.SearchPhrase))));
+
+            if (!string.IsNullOrEmpty(query.SortBy))
+            {
+                var columnsSelector = new Dictionary<string, Expression<Func<MusicAlbum, object>>>
+                {
+                    {nameof(MusicAlbum.Name).ToLower(), r=>r.Name },
+                    {nameof(MusicAlbum.AmountOfSongs).ToLower() , r=>r.AmountOfSongs},
+                    {nameof(MusicAlbum.Genre).ToLower(), r=>r.Genre},
+                    {nameof(MusicAlbum.PublicationYear).ToLower(), r=>r.PublicationYear},
+                };
+                var selectedColumn = columnsSelector[query.SortBy.ToLower()];
+                baseQuery = query.SortDirection == SortDirection.ASC ?
+                    baseQuery.OrderBy(selectedColumn) :
+                    baseQuery.OrderByDescending(selectedColumn);
+            }
+            var musicAlbums = baseQuery.Skip(query.PageSize * (query.PageNumber - 1))
+                .Take(query.PageSize)
+                .ToList();
+
+            var dto = _mapper.Map<IEnumerable<MusicAlbumDto>>(musicAlbums);
+
+            return new PageResult<MusicAlbumDto>(dto,
+                                                 dto.Count(),
+                                                 query.PageSize,
+                                                 query.PageNumber);
         }
 
         public void Update(int bandId, UpdateAlbumDto dto)
