@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace VinylAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BandController : ControllerBase
     {
         private readonly IBandService _serivce;
@@ -38,6 +40,7 @@ namespace VinylAPI.Controllers
             return Ok(band);
         }
         [HttpPost("create")]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateBand([FromBody] CreateBandDto dto)
         {
             var bandId = _serivce.Create(dto);

@@ -12,6 +12,7 @@ using VinylAPI.Models;
 
 namespace VinylAPI.Services
 {
+   
     public interface IBandService
     {
         BandDto GetById(int id);
@@ -77,10 +78,7 @@ namespace VinylAPI.Services
 
         public int Create(CreateBandDto dto)
         {
-            var isAdmin = _contextService.User.IsInRole("Admin");
-            if (!isAdmin)
-                throw new ForbiddenException("Brak dostępu do zasobu");
-
+            IsInRole(Roles.USER);
             var band = _mapper.Map<Band>(dto);
 
             _dbContext.Bands.Add(band);
@@ -90,6 +88,7 @@ namespace VinylAPI.Services
 
         public void Delete(int bandId)
         {
+
             var band = _dbContext
                 .Bands
                 .FirstOrDefault(b => b.Id == bandId);
@@ -116,6 +115,12 @@ namespace VinylAPI.Services
 
             _dbContext.SaveChanges();
 
+        }
+        private void IsInRole(string roleName)
+        {
+            var isAdmin = _contextService.User.IsInRole(roleName);
+            if (!isAdmin)
+                throw new ForbiddenException("Brak dostępu do zasobu");
         }
     }
 }

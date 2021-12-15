@@ -14,6 +14,5 @@ namespace VinylAPI.Models
         public DateTime BirthDay { get; set; }
         public string Name { get; set; }
         public string SurrName { get; set; }
-        public int RoleId { get; set; } = 1;
     }
 }
