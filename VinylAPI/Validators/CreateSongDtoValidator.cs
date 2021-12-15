@@ -9,7 +9,6 @@ namespace VinylAPI.Validators
         {
             RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
             RuleFor(x => x.Lenght).NotNull().LessThanOrEqualTo(60.00);
-
         }
     }
 }
