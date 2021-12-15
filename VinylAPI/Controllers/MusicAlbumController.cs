@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace VinylAPI.Controllers
         }
 
         [HttpGet("query")]
-        public IActionResult GetAllMusicAlbumsWithQuery([FromQuery] Query query)
+        public IActionResult GetAllMusicAlbumsWithQuery([FromQuery] MusicAlbumQuery query)
         {
             return Ok(_musicAlbumService.GetAllWithQuery(query));
         }
@@ -37,18 +38,21 @@ namespace VinylAPI.Controllers
             return Ok(album);
         }
         [HttpPost("bands/{bandId}/album/create")]
+        [Authorize]
         public IActionResult CreateAlbum([FromRoute] int bandId, [FromBody] CreateAlbumDto dto)
         {
             var albumdId = _musicAlbumService.Create(bandId, dto);
             return Created($"api/bands/{bandId}/album/{albumdId}",null);
         }
         [HttpPut("bands/{bandId}/album")]
+        [Authorize]
         public IActionResult UpdateAlbum([FromRoute] int bandId, [FromBody] UpdateAlbumDto dto)
         {
             _musicAlbumService.Update(bandId, dto);
             return NoContent();
         }
         [HttpDelete("bands/{bandId}/album/{albumId}")]
+        [Authorize]
         public IActionResult DeleteAlbum([FromRoute] int bandId, [FromRoute] int albumId)
         {
             _musicAlbumService.Delete(bandId, albumId);
