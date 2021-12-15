@@ -45,11 +45,11 @@ namespace VinylAPI
             {
                 new Role()
                 {
-                    Name = "User"
+                    Name = Roles.USER
                 },
                 new Role()
                 {
-                    Name = "Admin"
+                    Name = Roles.ADMIN
                 }
             };
             return roles;

@@ -12,6 +12,7 @@ namespace VinylAPI.Entities
         [MaxLength(50,ErrorMessage = "Nazwa zespołu przekracza 50 znaków.")]
         public string Name { get; set; }
         public string Description { get; set; }
+        public int? CreatedByUserId { get; set; }
         public ICollection<MusicAlbum> Albums { get; set; }
     }
 }

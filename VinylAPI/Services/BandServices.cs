@@ -12,7 +12,6 @@ using VinylAPI.Models;
 
 namespace VinylAPI.Services
 {
-   
     public interface IBandService
     {
         BandDto GetById(int id);
@@ -78,8 +77,9 @@ namespace VinylAPI.Services
 
         public int Create(CreateBandDto dto)
         {
-            IsInRole(Roles.USER);
+            IsInRole(Roles.ADMIN);
             var band = _mapper.Map<Band>(dto);
+            band.CreatedByUserId = _contextService.GetUserId;
 
             _dbContext.Bands.Add(band);
             _dbContext.SaveChanges();
