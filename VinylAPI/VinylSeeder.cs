@@ -49,7 +49,7 @@ namespace VinylAPI
                         BirthDay = DateTime.Now,
                         Nick = Roles.ADMIN,
                         SurrName = Roles.ADMIN,
-                        RoleId = 1, // adminrole id = 1 
+                        RoleId = 2, // adminrole id = 2
                     };
 
                     var password = Roles.ADMIN.ToLower();

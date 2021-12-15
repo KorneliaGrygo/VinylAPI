@@ -20,7 +20,7 @@ namespace VinylAPI.Controllers
         }
 
         [HttpGet("bands/{bandId}/album")]
-        public IActionResult GetAllMusicAlbumsForBand([FromRoute] int bandId, [FromQuery] Query query)
+        public IActionResult GetAllMusicAlbumsForBand([FromRoute] int bandId)
         {
             var albums = _musicAlbumService.GetAll(bandId);
             return Ok(albums);
