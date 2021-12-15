@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,10 +16,12 @@ namespace VinylAPI
     public class VinylSeeder
     {
         private readonly VinylAPIDbContext _dbContext;
+        private IPasswordHasher<User> _passwordHasher { get; }
 
-        public VinylSeeder(VinylAPIDbContext dbContext)
+        public VinylSeeder(VinylAPIDbContext dbContext, IPasswordHasher<User> passwordHasher)
         {
             _dbContext = dbContext;
+            _passwordHasher = passwordHasher;
         }
         public void Seed()
         {
@@ -34,6 +38,25 @@ namespace VinylAPI
                 {
                     var roles = GetRoles();
                     _dbContext.Roles.AddRange(roles);
+                    _dbContext.SaveChanges();
+                }
+                if(!_dbContext.Users.Include(x=>x.Role).Any(x=>x.Role.Name == Roles.ADMIN))
+                {
+                    User admin = new()
+                    {
+                        Name = Roles.ADMIN,
+                        Email = $"{Roles.ADMIN.ToLower()}@gmail.com",
+                        BirthDay = DateTime.Now,
+                        Nick = Roles.ADMIN,
+                        SurrName = Roles.ADMIN,
+                        RoleId = 1, // adminrole id = 1 
+                    };
+
+                    var password = Roles.ADMIN.ToLower();
+                    var hashedPassword = _passwordHasher.HashPassword(admin, password);
+                    admin.PasswordHash = hashedPassword;
+
+                    _dbContext.Users.Add(admin);
                     _dbContext.SaveChanges();
                 }
             }
@@ -63,6 +86,7 @@ namespace VinylAPI
                 {
                     Name = "Queen",
                     Description = "Brytyjski zespół rockowy.",
+                    CreatedByUserId = null,
                     Albums = new List<MusicAlbum>()
                     {
                         new MusicAlbum()

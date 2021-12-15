@@ -83,7 +83,9 @@ namespace VinylAPI
             services.AddScoped<IValidator<CreateAlbumDto>, CreateAlbumDtoValidator>(); //renestracna validatora 
             services.AddScoped<IValidator<CreateBandDto>, CreateBandDtoValidator>(); //renestracna validatora 
             services.AddScoped<IValidator<CreateSongDto>, CreateSongDtoValidator>(); //renestracna validatora 
-            services.AddScoped<IValidator<Query>, QueryValidator>(); //renestracna validatora 
+            services.AddScoped<IValidator<BandQuery>, BandQueryValidator>(); //renestracna validatora 
+            services.AddScoped<IValidator<MusicAlbumQuery>, MusicAlbumQueryValidator>(); //renestracna validatora 
+            services.AddScoped<IValidator<SongQuery>, SongQueryValidator>(); //renestracna validatora 
             #endregion
             services.AddSwaggerGen(c =>
             {
