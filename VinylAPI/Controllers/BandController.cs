@@ -16,7 +16,6 @@ namespace VinylAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class BandController : ControllerBase
     {
         private readonly IBandService _serivce;
@@ -27,7 +26,7 @@ namespace VinylAPI.Controllers
         }
 
         [HttpGet("Query")]
-        public IActionResult GetAll([FromQuery] Query query)
+        public IActionResult GetAll([FromQuery] BandQuery query)
         {
             var bandsDtos = _serivce.GetAll(query);
 
@@ -40,7 +39,7 @@ namespace VinylAPI.Controllers
             return Ok(band);
         }
         [HttpPost("create")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public IActionResult CreateBand([FromBody] CreateBandDto dto)
         {
             var bandId = _serivce.Create(dto);
@@ -48,12 +47,14 @@ namespace VinylAPI.Controllers
             return Created($"/api/band/{bandId}", null);
         }
         [HttpPut("{id}/update")]
+        [Authorize]
         public IActionResult Put([FromRoute] int id, [FromBody] UpdateBandDto dto)
         {
             _serivce.UpdateBand(id, dto);
-            return NotFound();
+            return NoContent();
         }
         [HttpDelete("{id}/delete")]
+        [Authorize]
         public IActionResult Delete([FromRoute] int id)
         {
             _serivce.Delete(id);
