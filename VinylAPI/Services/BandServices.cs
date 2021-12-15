@@ -15,11 +15,10 @@ namespace VinylAPI.Services
     public interface IBandService
     {
         BandDto GetById(int id);
-        PageResult<BandDto> GetAll(Query query);
+        PageResult<BandDto> GetAll(BandQuery query);
         int Create(CreateBandDto dto);
         void Delete(int bandId);
         void UpdateBand(int bandId, UpdateBandDto dto);
-
     }
     public class BandServices : IBandService
     {
@@ -45,7 +44,7 @@ namespace VinylAPI.Services
             var bandDto = _mapper.Map<BandDto>(band);
             return bandDto;
         }
-        public PageResult<BandDto> GetAll(Query query)
+        public PageResult<BandDto> GetAll(BandQuery query)
         {
             var baseQuery = _dbContext.Bands
                    .Include(x => x.Albums)
@@ -88,6 +87,7 @@ namespace VinylAPI.Services
 
         public void Delete(int bandId)
         {
+            IsInRole(Roles.ADMIN);
 
             var band = _dbContext
                 .Bands
@@ -102,6 +102,7 @@ namespace VinylAPI.Services
 
         public void UpdateBand(int bandId, UpdateBandDto dto)
         {
+            IsInRole(Roles.ADMIN);
             var band = _dbContext
                 .Bands
                 .FirstOrDefault(b => b.Id == bandId);

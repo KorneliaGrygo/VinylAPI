@@ -19,20 +19,25 @@ namespace VinylAPI.Services
         int Create(int bandId, CreateAlbumDto dto);
         void Update(int bandId, UpdateAlbumDto dto);
         void Delete(int bandId, int albumId);
-        PageResult<MusicAlbumDto> GetAllWithQuery(Query query);
+        PageResult<MusicAlbumDto> GetAllWithQuery(MusicAlbumQuery query);
     }
     public class MusicAlbumService : IMusicAlbumService
     {
         private readonly VinylAPIDbContext _context;
         private readonly IMapper _mapper;
-        public MusicAlbumService(VinylAPIDbContext context, IMapper mapper)
+        private readonly IUserContextService _contextService;
+
+        public MusicAlbumService(VinylAPIDbContext context, IMapper mapper, IUserContextService contextService)
         {
             _context = context;
             _mapper = mapper;
+            _contextService = contextService;
         }
 
         public int Create(int bandId, CreateAlbumDto dto)
         {
+            IsInRole(Roles.ADMIN);
+
             var band = _context.Bands.FirstOrDefault(x => x.Id == bandId);
             if (band == null)
                 throw new NotFoundException("Podany zespół nie istnieje");
@@ -50,6 +55,8 @@ namespace VinylAPI.Services
 
         public void Delete(int bandId, int albumId)
         {
+            IsInRole(Roles.ADMIN);
+
             var band = _context.Bands
                .Include(x => x.Albums)
                .FirstOrDefault(x => x.Id == bandId);
@@ -94,7 +101,7 @@ namespace VinylAPI.Services
             return _mapper.Map<IEnumerable<GetMusicAlbumDto>>(band.Albums);
         }
 
-        public PageResult<MusicAlbumDto> GetAllWithQuery(Query query)
+        public PageResult<MusicAlbumDto> GetAllWithQuery(MusicAlbumQuery query)
         {
             var baseQuery = _context.MusicAlbums
                 .Where(x => query.SearchPhrase == null || (x.Genre.ToLower().Contains(query.SearchPhrase) || (x.Name.ToLower().Contains(query.SearchPhrase))));
@@ -127,6 +134,8 @@ namespace VinylAPI.Services
 
         public void Update(int bandId, UpdateAlbumDto dto)
         {
+            IsInRole(Roles.ADMIN);
+
             var band = _context.Bands.Include(x => x.Albums).FirstOrDefault(x => x.Id == bandId);
             if (band == null)
                 throw new NotFoundException("Podany zespół nie istnieje");
@@ -148,5 +157,12 @@ namespace VinylAPI.Services
 
             _context.SaveChanges();
         }
+        private void IsInRole(string roleName)
+        {
+            var isAdmin = _contextService.User.IsInRole(roleName);
+            if (!isAdmin)
+                throw new ForbiddenException("Brak dostępu do zasobu");
+        }
     }
 }
+
