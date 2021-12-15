@@ -73,6 +73,7 @@ namespace VinylAPI
             services.AddScoped<ISongService, SongService>();
             services.AddScoped<IMusicAlbumService, MusicAlbumService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserContextService, UserContextService>();
             #endregion
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();

@@ -19,6 +19,11 @@ namespace VinylAPI.Middleware
             {
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(badRequestException.Message);
+            } 
+            catch(ForbiddenException forbi)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbi.Message);
             }
             catch(NotFoundException notfound)
             {

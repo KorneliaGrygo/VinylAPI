@@ -25,11 +25,13 @@ namespace VinylAPI.Services
     {
         private readonly VinylAPIDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IUserContextService _contextService;
 
-        public BandServices(VinylAPIDbContext dbContext, IMapper mapper)
+        public BandServices(VinylAPIDbContext dbContext, IMapper mapper, IUserContextService contextService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _contextService = contextService;
         }
         public BandDto GetById(int id)
         {
@@ -75,6 +77,10 @@ namespace VinylAPI.Services
 
         public int Create(CreateBandDto dto)
         {
+            var isAdmin = _contextService.User.IsInRole("Admin");
+            if (!isAdmin)
+                throw new ForbiddenException("Brak dostępu do zasobu");
+
             var band = _mapper.Map<Band>(dto);
 
             _dbContext.Bands.Add(band);
