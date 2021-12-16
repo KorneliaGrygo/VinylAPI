@@ -15,6 +15,7 @@ namespace VinylAPI
             CreateMap<Band, BandDto>();
             CreateMap<CreateBandDto, Band>();
             CreateMap<GetMusicAlbumDto, MusicAlbum>().ReverseMap();
+            CreateMap<CreateAlbumDto, MusicAlbum>().ReverseMap();
             CreateMap<MusicAlbum, MusicAlbumDto>();
             CreateMap<UpdateAlbumDto, MusicAlbum>().ReverseMap();
             CreateMap<Song, SongDto>();
