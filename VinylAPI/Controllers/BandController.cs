@@ -58,7 +58,7 @@ namespace VinylAPI.Controllers
         public IActionResult Delete([FromRoute] int id)
         {
             _serivce.Delete(id);
-            return NotFound();
+            return NoContent();
         }
        
     }
