@@ -118,7 +118,7 @@ namespace VinylAPI.Services
                 .ToList();
             var dto = _mapper.Map<IEnumerable<SongDto>>(songs);
 
-            return new PageResult<SongDto>(dto, dto.Count(), query.PageSize, query.PageNumber); 
+            return new PageResult<SongDto>(dto, baseQuery.Count(), query.PageSize, query.PageNumber); 
         }
 
         public SongDto GetById(int bandId, int albumId, int songId)

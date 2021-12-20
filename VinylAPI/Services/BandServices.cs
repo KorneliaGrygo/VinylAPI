@@ -71,7 +71,7 @@ namespace VinylAPI.Services
                 .ToList();
             var bandsDtos = _mapper.Map<List<BandDto>>(bands);
 
-            return new PageResult<BandDto>(bandsDtos, bandsDtos.Count(), query.PageSize, query.PageNumber);
+            return new PageResult<BandDto>(bandsDtos, baseQuery.Count(), query.PageSize, query.PageNumber);
         }
 
         public int Create(CreateBandDto dto)

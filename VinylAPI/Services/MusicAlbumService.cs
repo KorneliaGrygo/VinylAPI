@@ -127,7 +127,7 @@ namespace VinylAPI.Services
             var dto = _mapper.Map<IEnumerable<MusicAlbumDto>>(musicAlbums);
 
             return new PageResult<MusicAlbumDto>(dto,
-                                                 dto.Count(),
+                                                 baseQuery.Count(),
                                                  query.PageSize,
                                                  query.PageNumber);
         }

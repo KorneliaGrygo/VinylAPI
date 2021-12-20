@@ -35,6 +35,6 @@ namespace VinylAPI.Middleware
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsync("Coś poszło nie tak");
             }
-        }
+            }
     }
 }
